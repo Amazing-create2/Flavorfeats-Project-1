@@ -1,19 +1,23 @@
-from typing import List, Optional
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2012-2022 Vinay Sajip.
+# Licensed to the Python Software Foundation under a contributor agreement.
+# See LICENSE.txt and CONTRIBUTORS.txt.
+#
+import logging
 
-import pip._internal.utils.inject_securetransport  # noqa
-from pip._internal.utils import _log
+__version__ = '0.3.6'
 
-# init_logging() must be called before any call to logging.getLogger()
-# which happens at import of most modules.
-_log.init_logging()
+class DistlibException(Exception):
+    pass
 
+try:
+    from logging import NullHandler
+except ImportError: # pragma: no cover
+    class NullHandler(logging.Handler):
+        def handle(self, record): pass
+        def emit(self, record): pass
+        def createLock(self): self.lock = None
 
-def main(args: (Optional[List[str]]) = None) -> int:
-    """This is preserved for old console scripts that may still be referencing
-    it.
-
-    For additional details, see https://github.com/pypa/pip/issues/7498.
-    """
-    from pip._internal.utils.entrypoints import _wrapper
-
-    return _wrapper(args)
+logger = logging.getLogger(__name__)
+logger.addHandler(NullHandler())
